@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package mafia;
+
+option go_package = "github.com/SphericalPotatoInVacuum/soa-grpc-engine/proto_gen/mafia;mafia";
+
+service Mafia {
+  rpc Join(JoinRequest) returns (stream Event);
+
+  rpc SendChatMessage(SendChatMessageRequest) returns (SendChatMessageResponse);
+
+  rpc Vote(VoteRequest) returns (VoteResponse);
+}
+
+message JoinRequest {
+  string Username = 1;
+  string RoomId = 2;
+}
+
+message Event {
+  message JoinResponseMessage {
+    bool Success = 1;
+    optional string Reason = 2;
+  }
+
+  message ConnectionEventMessage {
+    string Username = 1;
+    bool Connected = 2;  // true if connected, false if disconnected
+  }
+
+  message ChatEventMessage {
+    string Username = 1;
+    string Text = 2;
+  }
+
+  message VoteEventMessage {
+    string Voter = 1;
+    string Target = 2;
+  }
+
+  message EndTurnEventMessage {
+    string Voter = 1;
+  }
+
+  oneof EventBody {
+    JoinResponseMessage JoinResponse = 1;
+    ConnectionEventMessage ConnectionEvent = 2;
+    ChatEventMessage ChatEvent = 3;
+    VoteEventMessage VoteEvent = 4;
+    EndTurnEventMessage EndTurnEvent = 5;
+  }
+}
+
+message SendChatMessageRequest {
+  string Text = 1;
+}
+message SendChatMessageResponse {
+  bool Success = 1;
+  optional string Reason = 2;
+}
+
+message VoteRequest {
+  string Target = 1;
+}
+message VoteResponse {
+  bool Success = 1;
+  optional string Reason = 2;
+}
+
+message EndTurnRequest {}
+message EndTurnResponse {
+  bool Success = 1;
+  optional string Reason = 2;
+}
+
+message RevealRequest {}
+message RevealResponse {
+  bool Success = 1;
+  optional string Reason = 2;
+}
